@@ -1,0 +1,163 @@
+﻿<h1>綠界金流串接</h1>
+<div class="card" id="app">
+	<div class="card-header">
+		API 欄位
+	</div>
+	<div class="card-body">
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">特店編號</label>
+				<input type="text" class="form-control" id="MerchantID" v-model="addForm.MerchantID">
+			</div>
+			<div class="col-md-6">
+				<label class="form-label">特店訂單編號</label>
+				<input type="text" class="form-control" id="MerchantTradeNo" v-model="addForm.MerchantTradeNo">
+			</div>
+		</div>
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">特店交易時間</label>
+				<input type="text" class="form-control" id="MerchantTradeDate" v-model="addForm.MerchantTradeDate">
+			</div>
+			<div class="col-md-6">
+				<label class="form-label">交易類型</label>
+				<input type="text" class="form-control" id="PaymentType" v-model="addForm.PaymentType">
+			</div>
+		</div>
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">交易金額</label>
+				<input type="text" class="form-control" id="TotalAmount" v-model="addForm.TotalAmount">
+			</div>
+			<div class="col-md-6">
+				<label class="form-label">交易描述</label>
+				<input type="text" class="form-control" id="TradeDesc" v-model="addForm.TradeDesc">
+			</div>
+		</div>
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">商品名稱</label>
+				<input type="text" class="form-control" id="ItemName" v-model="addForm.ItemName">
+			</div>
+			<div class="col-md-6">
+				<label class="form-label">付款完成通知回傳網址</label>
+				<input type="text" class="form-control" id="ReturnURL" v-model="addForm.ReturnURL">
+			</div>
+		</div>
+
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">選擇預設付款方式</label>
+				<input type="text" class="form-control" id="ChoosePayment" v-model="addForm.ChoosePayment">
+			</div>
+@*			<div class="col-md-6">
+				<label class="form-label">檢查碼</label>
+				<input type="text" class="form-control" id="CheckMacValue" v-model="addForm.CheckMacValue">
+			</div>*@
+		</div>
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">CheckMacValue加密類型</label>
+				<input type="text" class="form-control" id="EncryptType" v-model="addForm.EncryptType">
+			</div>
+			@*<div class="col-md-6">
+			<label class="form-label">CheckMacValue加密類型</label>
+			<input type="text" class="form-control" id="EncryptType" v-model="addForm.EncryptType">
+			</div>*@
+		</div>
+		<div class="row mb-2">
+			<div class="col-md-6">
+				<label class="form-label">Client端返回特店的按鈕連結</label>
+				<input type="text" class="form-control" id="ClientBackURL" v-model="addForm.ClientBackURL">
+			</div>
+			<div class="col-md-6">
+				<label class="form-label">Client端回傳付款結果網址</label>
+				<input type="text" class="form-control" id="OrderResultURL" v-model="addForm.OrderResultURL">
+			</div>
+		</div>
+		<button type="button" class="btn btn-primary" v-on:click="SendToNewebPay()">信用卡付款</button>
+	</div>
+</div>
+@section scripts {
+	<script>
+		const app = Vue.createApp({
+			data() {
+				return {
+					// 表單資料
+					addForm: {
+						MerchantID: '@ViewData["MerchantID"]'				//特店編號
+						, MerchantTradeNo: 'hehepay30405604030'   //特店訂單編號
+						, MerchantTradeDate: '2023/03/02 07:09:23'			//特店交易時間
+						, PaymentType: 'aio'								//交易類型
+						, TotalAmount: '1000'								//交易金額
+						, TradeDesc: '促銷方案'							//交易描述
+						, ItemName: 'Apple iphone 7 手機殼'						//商品名稱
+						, ReturnURL: '@ViewData["ReturnURL"]'				//等於藍新的NotifyURL
+						, ChoosePayment: 'Credit'							//選擇預設付款方式
+						//, CheckMacValue: ''									//檢查碼
+						, EncryptType: '1'									//CheckMacValue加密類型
+						, ClientBackURL: '@ViewData["ClientBackURL"]'		//等於藍新的ClientBackURL
+						, OrderResultURL:'@ViewData["OrderResultURL"]'		//等於藍新的ReturnURL
+					}
+				}
+			}
+			, methods: {
+				// 傳送至綠界金流
+				SendToNewebPay() {
+					var self = this;
+
+					// 組合表單資料
+					var postData = {};
+					postData['MerchantID'] = self.addForm.MerchantID;					//特店編號
+					postData['MerchantTradeNo'] = self.addForm.MerchantTradeNo;			//特店訂單編號
+					postData['MerchantTradeDate'] = self.addForm.MerchantTradeDate;		//特店交易時間
+					postData['PaymentType'] = self.addForm.PaymentType;					//交易類型
+					postData['TotalAmount'] = self.addForm.TotalAmount;					//交易金額
+					postData['TradeDesc'] = self.addForm.TradeDesc;						//交易描述
+					postData['ItemName'] = self.addForm.ItemName;						//商品名稱
+					postData['ReturnURL'] = self.addForm.ReturnURL;						//等於藍新的NotifyURL
+					postData['ChoosePayment'] = self.addForm.ChoosePayment;				//選擇預設付款方式
+					//postData['CheckMacValue'] = self.addForm.CheckMacValue;				//檢查碼
+					postData['EncryptType'] = self.addForm.EncryptType;					//CheckMacValue加密類型
+					postData['ClientBackURL'] = self.addForm.ClientBackURL;				//等於藍新的ClientBackURL
+					postData['OrderResultURL'] = self.addForm.OrderResultURL;			//等於藍新的ReturnURL
+
+					// 使用 jQuery Ajax 傳送至後端
+					$.ajax({
+						url: '@Url.Content("~/Home/SendToNewebPay")',
+						method: 'POST',
+						dataType: 'json',
+						data: { inModel: postData, __RequestVerificationToken: $('@Html.AntiForgeryToken()').val() },
+						//postData的變數名稱是inModel
+						//在 AJAX 裡使用 AntiForgeryToken - (ASP.NET MVC 防範 CSRF 攻擊) 變數名稱是__RequestVerificationToken
+						success: function (returnObj) {
+							// 呼叫綠界金流 API
+							//consolee.log(returnObj);
+							
+							const form = document.createElement('form');
+							form.method = 'post';
+							form.action = 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5';//綠界金流驗證網址(測試環境)
+							//form.action = 'https://payment-stage.ecpay.com.tw/SP/CreateTrade';//綠界金流驗證網址(測試環境)
+
+							for (const key in returnObj) {
+								if (returnObj.hasOwnProperty(key)) {
+									const hiddenField = document.createElement('input');
+									hiddenField.type = 'hidden';
+									hiddenField.name = key;
+									hiddenField.value = returnObj[key];
+									form.appendChild(hiddenField);
+								}
+							}
+							document.body.appendChild(form);
+							form.submit();
+						},
+						error: function (err) {
+							alert(err.status + " " + err.statusText + '\n' + err.responseText);
+						}
+					});
+				}
+			}
+		});
+		const vm = app.mount('#app');
+	</script>
+}
